@@ -1,0 +1,29 @@
+.
+├── README.md
+├── config.py
+├── data
+│   ├── credit_dataset1.csv
+│   └── credit_dataset2.csv
+├── docker
+│   ├── Dockerfile.evaluate
+│   ├── Dockerfile.inference
+│   ├── Dockerfile.train
+│   └── requirements
+│       ├── requirements-eval.txt
+│       ├── requirements-inference.txt
+│       └── requirements-train.txt
+├── docker-compose.yml
+├── evaluate.py
+├── inference.py
+├── model
+│   └── xgb_credit_model3.pkl
+├── project_struc.txt
+├── requirements.txt
+├── train.py
+└── visualizations
+    ├── confusion_matrix.png
+    ├── lime_explanation.png
+    ├── metrics_bar.png
+    └── shap_summary.png
+
+6 directories, 21 files

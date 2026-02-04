@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY config.py evaluate.py ./
 # Uncomment
-#CMD ["python", "evaluate.py"]
+CMD ["python", "evaluate.py"]

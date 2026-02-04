@@ -1,17 +1,42 @@
 version: "3.9"
 
 services:
+  # ---------------------------
+  # MLflow Tracking Server
+  # ---------------------------
+  mlflow-server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mlflow
+    container_name: mlflow-server
+    working_dir: /mlflow
+    volumes:
+      - ./mlflow:/mlflow  # persist DB and artifacts
+    ports:
+      - "5000:5000"
+    restart: always
 
+  # ---------------------------
+  # Training Service
+  # ---------------------------
   credit-train:
     build:
       context: .
       dockerfile: docker/Dockerfile.train
     container_name: credit-train
+    depends_on:
+      - mlflow-server
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow-server:5000
     volumes:
       - ./data:/app/data
       - ./model:/app/model
+      - ./visualizations:/app/visualizations
     restart: "no"
 
+  # ---------------------------
+  # Evaluation Service
+  # ---------------------------
   credit-eval:
     build:
       context: .
@@ -19,12 +44,18 @@ services:
     container_name: credit-eval
     depends_on:
       - credit-train
+      - mlflow-server
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow-server:5000
     volumes:
       - ./data:/app/data
       - ./model:/app/model
       - ./visualizations:/app/visualizations
     restart: "no"
 
+  # ---------------------------
+  # API Service
+  # ---------------------------
   credit-api:
     build:
       context: .
@@ -33,8 +64,10 @@ services:
     depends_on:
       - credit-train
       - credit-eval
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow-server:5000
     volumes:
       - ./model:/app/model
     ports:
       - "8000:8000"
-    restart: "always"
+    restart: always

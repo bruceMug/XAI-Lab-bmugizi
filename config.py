@@ -2,23 +2,32 @@ import os
 import pandas as pd
 
 # Paths
-DATA_PATH = "data/credit..." # TODO student to modify the dataset path as instructed
+DATA_PATH = "data/credit_dataset1.csv"  # TODO student to modify the dataset path
 MODEL_DIR = "model"
 VIZ_DIR = "visualizations"
 MODEL_PATH = os.path.join(MODEL_DIR, "xgb_credit_model1.pkl")
 RANDOM_STATE = 42
 
+# TODO: Set to false, if instructed
+WITH_GENDER = False
+
 # Data schema
 TARGET = "Risk"
-PROTECTED_ATTR = "Sex"
+PROTECTED_ATTR = "Sex" if WITH_GENDER else None
 
-# Categorical and numerical columns
-CATEGORICAL_COLS = [
+# Base categorical columns
+_BASE_CATEGORICAL_COLS = [
     "Sex",
     "Housing",
     "Saving accounts",
     "Purpose",
 ]
+
+CATEGORICAL_COLS = (
+    _BASE_CATEGORICAL_COLS
+    if WITH_GENDER
+    else [c for c in _BASE_CATEGORICAL_COLS if c != "Sex"]
+)
 
 NUMERICAL_COLS = [
     "Age",
@@ -30,8 +39,7 @@ NUMERICAL_COLS = [
 
 
 def load_data():
-    # TODO: Uncomment the read data_csv code below
-    # df = pd.read_csv(DATA_PATH)
+    df = pd.read_csv(DATA_PATH)
     validate_schema(df)
     return df
 
