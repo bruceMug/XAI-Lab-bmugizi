@@ -1,3 +1,5 @@
 .vscode/
+venv
 DEPLOYMENT_GUIDE.md
 minikube-linux-amd64
+__pycache__/
