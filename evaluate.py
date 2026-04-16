@@ -121,6 +121,7 @@ def evaluate():
         "Recall": recall_score(y_test, y_pred),
         "ROC AUC": roc_auc,
     }
+    # print(metrics)
 
     plt.bar(metrics.keys(), metrics.values())
     plt.ylim(0, 1)
@@ -142,6 +143,7 @@ def evaluate():
             y_pred=y_pred,
             sensitive_features=s_test,
         )
+        # print(mf.by_group)
 
         dp_diff = demographic_parity_difference(
             y_test, y_pred, sensitive_features=s_test
@@ -166,6 +168,7 @@ def evaluate():
                 - mf.by_group["false_negative_rate"].min()
             ),
         }
+        # print("Fairness metrics:", fairness_results)
 
         # Group-wise fairness plot
         mf.by_group.plot(kind="bar")
@@ -205,6 +208,26 @@ def evaluate():
     # ============================
     # LIME Analysis
     # ============================
+
+    # delete after -----------
+    # Get the instance details
+    # instance_idx = 0
+    # X_test_instance = preprocessor.transform(X_test)[instance_idx]
+    # y_test_instance = y_test.iloc[instance_idx]
+    # y_pred_instance = pipeline.predict(X_test.iloc[[instance_idx]])[0]
+    # y_pred_proba_instance = pipeline.predict_proba(X_test.iloc[[instance_idx]])[0]
+
+    # print("\n" + "="*60)
+    # print("LIME EXPLANATION INSTANCE DETAILS")
+    # print("="*60)
+    # print(f"Instance Index: {instance_idx}")
+    # print(f"Ground Truth Label: {'Good (1)' if y_test_instance == 1 else 'Bad (0)'}")
+    # print(f"Model Prediction: {'Good (1)' if y_pred_instance == 1 else 'Bad (0)'}")
+    # print(f"Prediction Probability: Bad={y_pred_proba_instance[0]:.4f}, Good={y_pred_proba_instance[1]:.4f}")
+    # print(f"Correct Prediction: {'Yes' if y_pred_instance == y_test_instance else 'No'}")
+    # print("="*60 + "\n")
+    ## -----------ends here
+
     lime_explainer = LimeTabularExplainer(
         training_data=preprocessor.transform(X_train),
         feature_names=feature_names.tolist(),
@@ -217,6 +240,13 @@ def evaluate():
         model.predict_proba,
         num_features=10,
     )
+
+    # # Print top contributing features
+    # print("\nLIME Top Features (sorted by contribution):")
+    # print("="*60)
+    # for feature, weight in exp.as_list():
+    #     print(f"{feature:50s} | Weight: {weight:+.6f}")
+    # print("="*60)
 
     exp.as_pyplot_figure()
     plt.title("LIME Local Explanation")
